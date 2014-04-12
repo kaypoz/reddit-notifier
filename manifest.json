@@ -1,0 +1,20 @@
+{
+  "manifest_version" : 2,
+  "name": "Reddit Notifier",
+  "version": "0.1",
+
+  "description": "Get reddit notifications in chrome",
+  "icons": { "16" : "images/icon.png",
+ 			"48" : "images/48.png",
+			"128" : "images/128.png"},
+  "homepage_url": "http://bgrawi.com/",
+	"background": {
+    "page" : "background.html" },
+	"permissions": [
+	],
+	"browser_action": {
+    "default_icon": "images/icon.png",
+    "default_title": "Reddit Notifier",
+    "default_popup": "popup.html"
+  }
+}
