@@ -46,5 +46,5 @@ function display_stories(feed_data) {
 }
 */
 $(document).ready(function() {
- $("#popup").html("it works!");
+ //$("#popup").html("it works!");
 });
