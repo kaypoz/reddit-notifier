@@ -32,7 +32,7 @@ var actions = {
 		});
 	},
 	markAsRead: function(request, callback) {
-        if(id.substring(0, 2) == "t4") {
+        if(request.name.substring(0, 2) == "t4") {
             $.ajax({
                 type: 'POST',
                 url: 'http://www.reddit.com/api/read_message',
@@ -46,7 +46,7 @@ var actions = {
         } else {
             $.ajax({
                 type: 'GET',
-                url: 'http://www.reddit.com/messages/unread',
+                url: 'http://www.reddit.com/message/unread',
                 }).success(function(data) {
                 if(callback) callback();
             });
