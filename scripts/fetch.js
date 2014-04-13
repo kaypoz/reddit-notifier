@@ -1,53 +1,5 @@
-/*
-function fetch_feed() {
-  chrome.extension.sendRequest({'action' : 'fetch_feed', 'url' : 'http://feeds.gawker.com/lifehacker/full'},
-    function(response) {
-      display_stories(response);
-    }
-  );
-}
-
-function display_stories(feed_data) {
-  var xml_doc = $.parseXML(feed_data);
-  $xml = $(xml_doc);
-  $('#popup').html('<img src="images/logo.png" id="logo" /><br clear="all" />');
-  $('#logo')[0].addEventListener('click', function() {
-    open_item('http://lifehacker.com/')
-    window.close() } )
-
-  var items = $xml.find("item");
-  items.each(function(index, element) {
-    var post = parse_post(element);
-    var item = '';
-    var class2 = '';
-    if (index >= localStorage['unread_count']) {
-      // // console.log('visited');
-      item += '<div class="post read">';
-    }
-    else {
-      item += '<div class="post">'
-    }
-    item += '<span class="tag">' + post.tag + '</span>\
-          <a href="' + post.url + '">\
-            <div id="' + post.id + '" class="item">\
-              <img src="' + post.img + '" width="107" height="60" />\
-              <h4>' + post.title + '</h4>\
-              <span class="description">' + post.description + '...</span>\
-            </div>\
-          </a>';
-    item += '</div>';
-    $('#popup').append(item);
-    // TODO why isn't jQuery's .on defined?
-    var $item = $('div[id="' + post.id + '"]')
-    console.log('$item', $item)
-    $item[0].addEventListener('click', function() {
-      open_item(post.url) } )
-  });
-}
-*/
-
 function getNotificationHTML(model) {
-	return 	'<div data-url="' + model.url + '" class="notification group">' +
+	return 	'<div data-read-url="' + model.url + '" data-id="' + model.id + '" class="notification">' +
 			'<h4>' + model.title + '</h4>' +
 			'<p>' + model.body + '</p>' +
 			'<span class="date">' + model.date + '</span>' +
@@ -72,6 +24,7 @@ function displayNotifications(notifications) {
       // Set up notification and its view model
       var item = notifications.data.children[i];
       var viewModel = {
+        id: '',
         title: '',
         body: '',
         url: '',
@@ -81,6 +34,7 @@ function displayNotifications(notifications) {
 
       // If the notification is a comment reply
       if(item.kind == 't1') {
+        viewModel.id = item.data.name;
         viewModel.title = '<strong>' + item.data.author + '</strong> replied in <strong>' + truncate(item.data.link_title,40) + '</strong>';
         viewModel.url = "http://www.reddit.com" + item.data.context;
         viewModel.body = truncate(item.data.body, 128);
@@ -88,6 +42,7 @@ function displayNotifications(notifications) {
 		
       }
 	  if(item.kind=='t4'){
+	  viewModel.id = item.data.name;
 	  viewModel.url="http://www.reddit.com/message/messages/"+ item.data.id;
 	  viewModel.title= '<strong>' + item.data.author + '</strong> messaged you <strong>' + truncate(item.data.subject,40) + '</strong>';
 	  viewModel.body = truncate(item.data.body,128);
@@ -107,6 +62,28 @@ function updateAndDisplayNotifications(callback) {
 			displayNotifications(response);
       if(callback) callback();
 		});
+}
+
+function markAsRead(name, modhash) {
+  $.ajax({
+    type: 'POST',
+    url: 'http://www.reddit.com/api/read_message',
+    data: {
+      id: name,
+      uh: modhash
+    }
+	}).success(function(data) {
+    var count = +localStorage.getItem('notificationCount') - 1;
+    if(count <= 0) {
+      localStorage.setItem('notificationCount', '0');
+      chrome.browserAction.setBadgeText({text: ''});
+      chrome.browserAction.setIcon({path: 'images/icongray.png'});
+    } else {
+      localStorage.setItem('notificationCount', '' + count);
+      chrome.browserAction.setBadgeText({text: '' + count});
+      chrome.browserAction.setIcon({path: 'images/icon.png'});
+    }
+  });
 }
 
 function setLastUpdateText(lastUpdate) {
@@ -143,10 +120,15 @@ $(document).ready(function() {
 		displayNotifications(JSON.parse(notifications));
 	}
 
-	$("body").on("click", "[data-url]", null, function(event) {
+	$("body").on("click", "[data-read-url]", null, function(event) {
 
-		var url = $(event.target).closest('.notification').data('url');
+    var notification = $(event.target).closest('.notification');
+
+		var url = notification.data('read-url');
+    var id = notification.data('id');
+    markAsRead(id, notifications.data.modhash);
 		chrome.tabs.create({url: url});
+    $(event.target).remove();
 	});
 
 
