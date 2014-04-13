@@ -1,3 +1,5 @@
+
+// The interval that holds to update notifications task
 var updateNotificationsInterval = null;
 
 var actions = {

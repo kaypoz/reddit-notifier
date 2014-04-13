@@ -126,7 +126,6 @@ $(document).ready(function() {
 		localStorage.setItem('notifications', JSON.stringify(notifications));
 	}
 	
-	//markAsRead(id, notifications.data.modhash, function() {
 		var count = (+localStorage.getItem('notificationCount')) - 1;
     if(count <= 0) {
       localStorage.setItem('notificationCount', '0');
@@ -137,8 +136,15 @@ $(document).ready(function() {
       chrome.browserAction.setBadgeText({text: '' + count});
       chrome.browserAction.setIcon({path: 'images/icon.png'});
     }
-	
-	chrome.tabs.create({url: url});
+    
+    // If a private message, mark as read
+	if(id.substring(0, 2) == "t4") {
+        markAsRead(id, notifications.data.modhash, function() {
+            chrome.tabs.create({url: url});
+        });
+    } else {
+        chrome.tabs.create({url: url});
+    }
 	//});
 
 	});
