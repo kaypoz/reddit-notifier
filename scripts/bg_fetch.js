@@ -19,10 +19,12 @@ var actions = {
 
         localStorage.setItem('notificationCount', nCount);
         chrome.browserAction.setBadgeText({text: ''+ nCount});
+        chrome.browserAction.setIcon({path: 'images/icon.png'});
       } else {
 
         localStorage.setItem('notificationCount', '0');
         chrome.browserAction.setBadgeText({text: ''});
+        chrome.browserAction.setIcon({path: 'images/icongray.png'});
       }
 
 			if(callback) callback(data);
