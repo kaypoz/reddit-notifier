@@ -13,6 +13,12 @@ body {
   font-size: 14px;
 }
 
+.date{
+	font-size: 10px;
+	 float: right;
+color:#A4A4A4 
+}
+
 .notification {
 	border-bottom: 1px solid #FFF;
 	padding: 5px;
@@ -22,7 +28,10 @@ body {
 .no-notifications {
   padding: 5px;
 }
+.notification strong{
+color:#369;
 
+}
 .notification:hover {
 	background: #FFF;
 	cursor: pointer;

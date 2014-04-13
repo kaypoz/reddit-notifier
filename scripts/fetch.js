@@ -47,9 +47,10 @@ function display_stories(feed_data) {
 */
 
 function getNotificationHTML(model) {
-	return 	'<div data-url="' + model.url + '" class="notification">' +
+	return 	'<div data-url="' + model.url + '" class="notification group">' +
 			'<h4>' + model.title + '</h4>' +
 			'<p>' + model.body + '</p>' +
+			'<span class="date">' + model.date + '</span>' +
 			'</div>';
 }
 
@@ -73,17 +74,26 @@ function displayNotifications(notifications) {
       var viewModel = {
         title: '',
         body: '',
-        url: ''
+        url: '',
+		date: ''
       };
-
+	
 
       // If the notification is a comment reply
       if(item.kind == 't1') {
         viewModel.title = '<strong>' + item.data.author + '</strong> replied in <strong>' + truncate(item.data.link_title,40) + '</strong>';
         viewModel.url = "http://www.reddit.com" + item.data.context;
         viewModel.body = truncate(item.data.body, 128);
-
+		viewModel.date= moment(item.data.created_utc, 'X').fromNow();
+		
       }
+	  if(item.kind=='t4'){
+	  viewModel.url="http://www.reddit.com/message/messages/"+ item.data.id;
+	  viewModel.title= '<strong>' + item.data.author + '</strong> messaged you <strong>' + truncate(item.data.subject,40) + '</strong>';
+	  viewModel.body = truncate(item.data.body,128);
+	  viewModel.date= moment(item.data.created_utc, 'X').fromNow();
+
+	  }
 
       notificationsHTML += getNotificationHTML(viewModel);
     }
