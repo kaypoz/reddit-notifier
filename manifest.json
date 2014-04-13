@@ -1,7 +1,7 @@
 {
   "manifest_version" : 2,
   "name": "Reddit Notifier",
-  "version": "0.1",
+  "version": "0.2",
 
   "description": "Get reddit notifications in chrome",
   "icons": { "16" : "images/icon.png",
@@ -9,12 +9,15 @@
 			"128" : "images/128.png"},
   "homepage_url": "http://bgrawi.com/",
 	"background": {
-    "page" : "background.html" },
+    "page" : "background.html"
+  },
 	"permissions": [
+    "http://www.reddit.com/*"
 	],
 	"browser_action": {
     "default_icon": "images/icon.png",
     "default_title": "Reddit Notifier",
     "default_popup": "popup.html"
-  }
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoF+US2mxX2a1/fCEp7iqsRyi5rI3vwGNnixvGSuNK1xSrdrfjDKZlYtoNUFifZbRer0/4n1+JoRgxe0UJK2nc1vRRY9DvHXXx7QOrL74fc76ZXrUzXf078u0nqDUfI0Mx/qqD+2WYqUiOyUrMGRDq7jj5XHvcxO5CoVC0dT9sF/wjKa2Y9G6qjM0hXIeERi/mgrfvutDoXBMKCyRvSuBIAkqjOvQjGGfORhFpUUNns3lvIxlA8GNp58lOrZmd8Lpq42h08BPsjFFuQEtO630c707AKHQr2T/N5nW2X221COa0mUMmRKw+DJ8HWwby+ZygGOENwTLteg9HujxOOtaLQIDAQAB"
 }

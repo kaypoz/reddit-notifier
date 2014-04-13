@@ -47,4 +47,18 @@ function display_stories(feed_data) {
 */
 $(document).ready(function() {
  //$("#popup").html("it works!");
+  $.ajax({
+    type: 'GET',
+    url: 'http://www.reddit.com/message/inbox.json',
+    dataType: 'json'
+  }).success(function(data) {
+    for(var i = 0, l = data.data.children.length; i < l; i++ ) {
+
+      var notification = data.data.children[i];
+
+      if(notification.kind == 't1') {
+       $("#popup").append(notification.data.body + "<BR><BR>");
+      }
+    }
+  });
 });
