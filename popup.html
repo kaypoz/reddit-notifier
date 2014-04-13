@@ -1,11 +1,16 @@
 <html>
 	<head>
 		<script src="scripts/jquery-1.11.0.min.js"></script>
+        <script src="scripts/moment-2.6.0.min.js"></script>
 		<script src="scripts/fetch.js"></script>
 		<link rel="stylesheet" href="styles/main.css" type="text/css" />
 	</head>
 	<body>
-	<div id="popup">
+    <div id="control" class="group">
+        <button type="button" class="forceRefresh">Refresh</button>
+        Last Updated: <span class="lastUpdate">Never</span>
+    </div>
+	<div id="notifications">
 		<div class="notification">
 			<h4>No notifications.</h4>
 		</div>

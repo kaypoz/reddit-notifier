@@ -57,10 +57,10 @@ function getNotificationHTML(model) {
 function displayNotifications(notifications) {
 
 	var notificationsHTML = '';
-	
+
 	// Loop through each notification
 	for(var i = 0, l = notifications.data.children.length; i < l; i++ ) {
-		
+
 		// Set up notification and its view model
 		var item = notifications.data.children[i];
 		var viewModel = {
@@ -68,36 +68,59 @@ function displayNotifications(notifications) {
 			body: '',
 			url: ''
 		};
-		
-		
+
+
 		// If the notification is a comment reply
 		if(item.kind == 't1') {
 			viewModel.title = '<strong>' + item.data.author + '</strong> replied in <strong>' + item.data.link_title + '</strong>';
 			viewModel.body = item.data.body;
-			viewModel.url = "http://www.reddit.com" + item.data.context; 
+			viewModel.url = "http://www.reddit.com" + item.data.context;
 		}
-		
+
 		notificationsHTML += getNotificationHTML(viewModel);
     }
-	
-	$("#popup").html(notificationsHTML);
+
+	$("#notifications").html(notificationsHTML);
+}
+
+function updateAndDisplayNotifications() {
+  chrome.extension.sendRequest({'action' : 'updateNotifications'}, function(response) {
+			displayNotifications(response);
+		});
+}
+
+function setLastUpdateText(lastUpdate) {
+
+  if(lastUpdate === null) {
+    lastUpdate = "Never";
+  } else {
+    lastUpdate = moment(lastUpdate).fromNow();
+  }
+
+  $(".lastUpdate").html(lastUpdate);
+
 }
 
 $(document).ready(function() {
 
 	var notifications = localStorage.getItem('notifications');
-	
+
 	if(notifications === null) {
-		chrome.extension.sendRequest({'action' : 'updateNotifications'}, function(response) {
-			displayNotifications(response);
-		});
+		updateAndDisplayNotifications();
 	} else {
 		displayNotifications(JSON.parse(notifications));
 	}
-	
+
 	$("body").on("click", "[data-url]", null, function(event) {
-		
+
 		var url = $(event.target).closest('.notification').data('url');
 		chrome.tabs.create({url: url});
 	});
+
+
+  $(".forceRefresh").click(function() {
+    updateAndDisplayNotifications();
+    setLastUpdateText(moment().format('X'));
+  });
+  setLastUpdateText(localStorage.getItem('lastUpdate'));
 });

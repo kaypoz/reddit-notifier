@@ -1,14 +1,13 @@
 body {
 	overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 350px;
 	margin: 0;
 	padding: 0;
 	width: 300px;
 	color: #333;
 	font-family: "Gill Sans", Tahoma, Verdana, sans-serif;
-}
-
-#popup {
-	font-size: 14px; 
+  font-size: 14px;
 }
 
 .notification {
@@ -25,4 +24,26 @@ body {
 .notification  h4 {
 	margin: 0px;
 	font-weight: normal;
+}
+
+#control {
+  background-color: #DDD;
+  padding: 5px;
+  line-height: 26px;
+}
+
+#control:after {
+  content: " ";
+  clear: both;
+}
+
+#control .forceRefresh {
+  float: right;
+}
+
+
+.group:after {
+  content: "";
+  display: table;
+  clear: both;
 }

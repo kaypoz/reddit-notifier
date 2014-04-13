@@ -7,10 +7,18 @@ var actions = {
 		}).success(function(data) {
 			console.log("Requesting Notification Data");
 			localStorage.setItem('notifications', JSON.stringify(data));
-			callback(data);
+      localStorage.setItem('lastUpdate', moment().format('X'));
+
+      if(typeof data.data.children != "undefined" &&  data.data.children.length > 0) {
+        chrome.browserAction.setBadgeText({text: ''+data.data.children.length});
+      }
+
+			if(callback) callback(data);
 		});
 	}
 };
+
+setInterval(actions.updateNotifications, 60000);
 
 
 function onRequest(request, sender, callback) {
