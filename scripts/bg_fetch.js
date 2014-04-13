@@ -1,6 +1,6 @@
 
 var actions = {
-	updateNotifications: function(callback) {
+	updateNotifications: function(request, callback) {
 		$.ajax({
 			type: 'GET',
 			url: 'http://www.reddit.com/message/unread.json',
@@ -17,7 +17,7 @@ var actions = {
 
         var nCount = data.data.children.length;
 
-        localStorage.setItem('notificationCount', nCount);
+        localStorage.setItem('notificationCount', '' + nCount);
         chrome.browserAction.setBadgeText({text: ''+ nCount});
         chrome.browserAction.setIcon({path: 'images/icon.png'});
       } else {
@@ -29,6 +29,18 @@ var actions = {
 
 			if(callback) callback(data);
 		});
+	},
+	markAsRead: function(request, callback) {
+		$.ajax({
+			type: 'POST',
+			url: 'http://www.reddit.com/api/read_message',
+			data: {
+			  id: request.name,
+			  uh: request.modhash
+			}
+			}).success(function(data) {
+			if(callback) callback();
+		  });
 	}
 };
 
@@ -38,7 +50,7 @@ setInterval(actions.updateNotifications, 60000);
 function onRequest(request, sender, callback) {
 	console.log('handling request');
 	if(actions.hasOwnProperty(request.action)) {
-		actions[request.action](callback);
+		actions[request.action](request, callback);
 	}
 }
 

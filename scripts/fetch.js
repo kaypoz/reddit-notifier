@@ -1,5 +1,5 @@
 function getNotificationHTML(model) {
-	return 	'<div data-read-url="' + model.url + '" data-id="' + model.id + '" class="notification">' +
+	return 	'<div data-read-url="' + model.url + '" data-id="' + model.id + '" class="notification group">' +
 			'<h4>' + model.title + '</h4>' +
 			'<p>' + model.body + '</p>' +
 			'<span class="date">' + model.date + '</span>' +
@@ -58,32 +58,14 @@ function displayNotifications(notifications) {
 }
 
 function updateAndDisplayNotifications(callback) {
-  chrome.extension.sendRequest({'action' : 'updateNotifications'}, function(response) {
+  chrome.extension.sendRequest({action : 'updateNotifications'}, function(response) {
 			displayNotifications(response);
-      if(callback) callback();
+      if(callback) callback(response);
 		});
 }
 
-function markAsRead(name, modhash) {
-  $.ajax({
-    type: 'POST',
-    url: 'http://www.reddit.com/api/read_message',
-    data: {
-      id: name,
-      uh: modhash
-    }
-	}).success(function(data) {
-    var count = +localStorage.getItem('notificationCount') - 1;
-    if(count <= 0) {
-      localStorage.setItem('notificationCount', '0');
-      chrome.browserAction.setBadgeText({text: ''});
-      chrome.browserAction.setIcon({path: 'images/icongray.png'});
-    } else {
-      localStorage.setItem('notificationCount', '' + count);
-      chrome.browserAction.setBadgeText({text: '' + count});
-      chrome.browserAction.setIcon({path: 'images/icon.png'});
-    }
-  });
+function markAsRead(name, modhash, callback) {
+   chrome.extension.sendRequest({action: 'markAsRead', name: name, modhash: modhash}, callback);
 }
 
 function setLastUpdateText(lastUpdate) {
@@ -117,18 +99,48 @@ $(document).ready(function() {
 	if(notifications === null) {
 		updateAndDisplayNotifications();
 	} else {
-		displayNotifications(JSON.parse(notifications));
+		notifications = JSON.parse(notifications);
+		displayNotifications(notifications);
 	}
 
 	$("body").on("click", "[data-read-url]", null, function(event) {
-
+	
+	var notifications = JSON.parse(localStorage.getItem('notifications'));
+	
     var notification = $(event.target).closest('.notification');
 
 		var url = notification.data('read-url');
     var id = notification.data('id');
-    markAsRead(id, notifications.data.modhash);
-		chrome.tabs.create({url: url});
-    $(event.target).remove();
+	
+	var foundNotification = false;
+	var i = 0;
+	
+	for(; i < notifications.data.children.length; i++) {
+		if(notifications.data.children[i].data.name == id)  {
+			foundNotification = true;
+			break;
+		}
+	}
+	if(foundNotification) {
+		notifications.data.children.splice(i, 1);
+		localStorage.setItem('notifications', JSON.stringify(notifications));
+	}
+	
+	//markAsRead(id, notifications.data.modhash, function() {
+		var count = (+localStorage.getItem('notificationCount')) - 1;
+    if(count <= 0) {
+      localStorage.setItem('notificationCount', '0');
+      chrome.browserAction.setBadgeText({text: ''});
+      chrome.browserAction.setIcon({path: 'images/icongray.png'});
+    } else {
+      localStorage.setItem('notificationCount', '' + count);
+      chrome.browserAction.setBadgeText({text: '' + count});
+      chrome.browserAction.setIcon({path: 'images/icon.png'});
+    }
+	
+	chrome.tabs.create({url: url});
+	//});
+
 	});
 
 
