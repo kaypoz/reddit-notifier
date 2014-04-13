@@ -72,9 +72,10 @@ function displayNotifications(notifications) {
 
 		// If the notification is a comment reply
 		if(item.kind == 't1') {
-			viewModel.title = '<strong>' + item.data.author + '</strong> replied in <strong>' + item.data.link_title + '</strong>';
-			viewModel.body = item.data.body;
+			viewModel.title = '<strong>' + item.data.author + '</strong> replied in <strong>' + truncate(item.data.link_title,40) + '</strong>';
 			viewModel.url = "http://www.reddit.com" + item.data.context;
+			viewModel.body = truncate(item.data.body, 128);
+			
 		}
 
 		notificationsHTML += getNotificationHTML(viewModel);
@@ -100,7 +101,19 @@ function setLastUpdateText(lastUpdate) {
   $(".lastUpdate").html(lastUpdate);
 
 }
-
+function truncate(text,length){
+	if(text.length > length){
+		text = text.substring(0,length);
+		if(text.charAt(text.length - 1 ) != " "){
+			var lastSpace = text.lastIndexOf(" ");
+			text = text.substring(0, lastSpace);
+		}
+		text += "...";
+	}
+	
+	return text;
+	// truncates input to defined length while ensuring that the text always ends in a full word
+}
 $(document).ready(function() {
 
 	var notifications = localStorage.getItem('notifications');
