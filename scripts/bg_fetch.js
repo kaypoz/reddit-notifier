@@ -3,14 +3,26 @@ var actions = {
 	updateNotifications: function(callback) {
 		$.ajax({
 			type: 'GET',
-			url: 'http://www.reddit.com/message/inbox.json',
+			url: 'http://www.reddit.com/message/unread.json',
 		}).success(function(data) {
+
 			console.log("Requesting Notification Data");
-			localStorage.setItem('notifications', JSON.stringify(data));
+
+      // Set the notifications and the current time
+      localStorage.setItem('notifications', JSON.stringify(data));
       localStorage.setItem('lastUpdate', moment().format('X'));
 
+      // Sets the notification count
       if(typeof data.data.children != "undefined" &&  data.data.children.length > 0) {
-        chrome.browserAction.setBadgeText({text: ''+data.data.children.length});
+
+        var nCount = data.data.children.length;
+
+        localStorage.setItem('notificationCount', nCount);
+        chrome.browserAction.setBadgeText({text: ''+ nCount});
+      } else {
+
+        localStorage.setItem('notificationCount', '0');
+        chrome.browserAction.setBadgeText({text: ''});
       }
 
 			if(callback) callback(data);

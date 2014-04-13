@@ -59,34 +59,43 @@ function displayNotifications(notifications) {
 	var notificationsHTML = '';
 
 	// Loop through each notification
-	for(var i = 0, l = notifications.data.children.length; i < l; i++ ) {
 
-		// Set up notification and its view model
-		var item = notifications.data.children[i];
-		var viewModel = {
-			title: '',
-			body: '',
-			url: ''
-		};
+  var length = notifications.data.children.length;
+
+  if(length == 0) {
+    notificationsHTML = '<div class="no-notifications"><h4>No notifications.</h4></div>';
+  } else {
+
+    for(var i = 0; i < length; i++ ) {
+
+      // Set up notification and its view model
+      var item = notifications.data.children[i];
+      var viewModel = {
+        title: '',
+        body: '',
+        url: ''
+      };
 
 
-		// If the notification is a comment reply
-		if(item.kind == 't1') {
-			viewModel.title = '<strong>' + item.data.author + '</strong> replied in <strong>' + truncate(item.data.link_title,40) + '</strong>';
-			viewModel.url = "http://www.reddit.com" + item.data.context;
-			viewModel.body = truncate(item.data.body, 128);
-			
-		}
+      // If the notification is a comment reply
+      if(item.kind == 't1') {
+        viewModel.title = '<strong>' + item.data.author + '</strong> replied in <strong>' + truncate(item.data.link_title,40) + '</strong>';
+        viewModel.url = "http://www.reddit.com" + item.data.context;
+        viewModel.body = truncate(item.data.body, 128);
 
-		notificationsHTML += getNotificationHTML(viewModel);
+      }
+
+      notificationsHTML += getNotificationHTML(viewModel);
     }
+  }
 
 	$("#notifications").html(notificationsHTML);
 }
 
-function updateAndDisplayNotifications() {
+function updateAndDisplayNotifications(callback) {
   chrome.extension.sendRequest({'action' : 'updateNotifications'}, function(response) {
 			displayNotifications(response);
+      if(callback) callback();
 		});
 }
 
@@ -110,7 +119,7 @@ function truncate(text,length){
 		}
 		text += "...";
 	}
-	
+
 	return text;
 	// truncates input to defined length while ensuring that the text always ends in a full word
 }
@@ -132,7 +141,10 @@ $(document).ready(function() {
 
 
   $(".forceRefresh").click(function() {
-    updateAndDisplayNotifications();
+    $('.forceRefresh').addClass('fa-spin');
+    updateAndDisplayNotifications(function() {
+      $('.forceRefresh').removeClass('fa-spin');
+    });
     setLastUpdateText(moment().format('X'));
   });
   setLastUpdateText(localStorage.getItem('lastUpdate'));

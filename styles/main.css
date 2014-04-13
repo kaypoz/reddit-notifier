@@ -7,6 +7,9 @@ body {
 	width: 300px;
 	color: #333;
 	font-family: "Gill Sans", Tahoma, Verdana, sans-serif;
+}
+
+#notifications {
   font-size: 14px;
 }
 
@@ -16,14 +19,26 @@ body {
 	background: #EEE;
 }
 
+.no-notifications {
+  padding: 5px;
+}
+
 .notification:hover {
 	background: #FFF;
 	cursor: pointer;
 }
 
-.notification  h4 {
+.notification h4, .no-notifications  h4 {
 	margin: 0px;
 	font-weight: normal;
+}
+
+.no-notifications h4 {
+  text-align: center;
+}
+
+#control {
+  font-size: 20px;
 }
 
 #control {
@@ -39,6 +54,10 @@ body {
 
 #control .forceRefresh {
   float: right;
+}
+
+#control i {
+  cursor: pointer;
 }
 
 
