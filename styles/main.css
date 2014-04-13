@@ -4,13 +4,22 @@ body {
   max-height: 350px;
 	margin: 0;
 	padding: 0;
-	width: 300px;
 	color: #333;
 	font-family: "Gill Sans", Tahoma, Verdana, sans-serif;
 }
 
+body.popup {
+	width: 300px;
+}
+
 #notifications {
   font-size: 14px;
+
+}
+
+#options {
+	width: 500px;
+	margin: 0 auto;
 }
 
 .date{
@@ -23,6 +32,7 @@ color:#A4A4A4
 	border-bottom: 1px solid #FFF;
 	padding: 5px;
 	background: #EEE;
+	
 }
 
 .no-notifications {
@@ -67,6 +77,7 @@ color:#369;
 
 #control i {
   cursor: pointer;
+
 }
 
 
@@ -74,4 +85,9 @@ color:#369;
   content: "";
   display: table;
   clear: both;
+}
+
+
+#options > h3 {
+	text-align: center;
 }

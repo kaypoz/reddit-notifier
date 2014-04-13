@@ -142,13 +142,27 @@ $(document).ready(function() {
 	//});
 
 	});
+	
+	$(".openOptions").click(function() {
+		chrome.tabs.create({url: 'options.html'});
+	});
 
 
   $(".forceRefresh").click(function() {
     $('.forceRefresh').addClass('fa-spin');
+	setTimeout(function() {
+        $('.forceRefresh').removeClass('fa-spin');
+    }, 1000)
+	//causes spinner to go around a minimum of one cycle
+	
     updateAndDisplayNotifications(function() {
-      $('.forceRefresh').removeClass('fa-spin');
+setTimeout(updateAndDisplayNotifications);
+	  
     });
+
+
+
+	
     setLastUpdateText(moment().format('X'));
   });
   setLastUpdateText(localStorage.getItem('lastUpdate'));
