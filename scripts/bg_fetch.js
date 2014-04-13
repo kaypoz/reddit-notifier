@@ -32,16 +32,25 @@ var actions = {
 		});
 	},
 	markAsRead: function(request, callback) {
-		$.ajax({
-			type: 'POST',
-			url: 'http://www.reddit.com/api/read_message',
-			data: {
-			  id: request.name,
-			  uh: request.modhash
-			}
-			}).success(function(data) {
-			if(callback) callback();
-		  });
+        if(id.substring(0, 2) == "t4") {
+            $.ajax({
+                type: 'POST',
+                url: 'http://www.reddit.com/api/read_message',
+                data: {
+                  id: request.name,
+                  uh: request.modhash
+                }
+                }).success(function(data) {
+                if(callback) callback();
+            });
+        } else {
+            $.ajax({
+                type: 'GET',
+                url: 'http://www.reddit.com/messages/unread',
+                }).success(function(data) {
+                if(callback) callback();
+            });
+        }
 	},
     
     initNotificationsInterval: function() {

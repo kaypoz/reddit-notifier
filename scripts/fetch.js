@@ -6,57 +6,66 @@ function getNotificationHTML(model) {
 			'</div>';
 }
 
-
+// Display the notifications
 function displayNotifications(notifications) {
 
 	var notificationsHTML = '';
 
 	// Loop through each notification
 
-  var length = notifications.data.children.length;
+    var length = notifications.data.children.length;
 
-  if(length == 0) {
-    notificationsHTML = '<div class="no-notifications"><h4>No notifications.</h4></div>';
-  } else {
+    if(length == 0) {
+        notificationsHTML = '<div class="no-notifications"><h4>No notifications.</h4></div>';
+    } else {
 
-    for(var i = 0; i < length; i++ ) {
+        for(var i = 0; i < length; i++ ) {
 
-      // Set up notification and its view model
-      var item = notifications.data.children[i];
-      var viewModel = {
-        id: '',
-        title: '',
-        body: '',
-        url: '',
-		date: ''
-      };
-	
+            // Set up notification and its view model
+            var item = notifications.data.children[i];
+            var viewModel = {
+                id: '',
+                title: '',
+                body: '',
+                url: '',
+                date: ''
+            };
+            
+            if(item.kind == 't1') {
+            
+                // Comment Reply
+                viewModel.id = item.data.name;
+                viewModel.title = '<strong>' + item.data.author + '</strong> replied in <strong>' + truncate(item.data.link_title,40) + '</strong>';
+                viewModel.url = "http://www.reddit.com" + item.data.context;
+                viewModel.body = truncate(item.data.body, 128);
+                viewModel.date = moment(item.data.created_utc, 'X').fromNow();
 
-      // If the notification is a comment reply
-      if(item.kind == 't1') {
-        viewModel.id = item.data.name;
-        viewModel.title = '<strong>' + item.data.author + '</strong> replied in <strong>' + truncate(item.data.link_title,40) + '</strong>';
-        viewModel.url = "http://www.reddit.com" + item.data.context;
-        viewModel.body = truncate(item.data.body, 128);
-		viewModel.date= moment(item.data.created_utc, 'X').fromNow();
-		
-      }
-	  if(item.kind=='t4'){
-	  viewModel.id = item.data.name;
-	  viewModel.url="http://www.reddit.com/message/messages/"+ item.data.id;
-	  viewModel.title= '<strong>' + item.data.author + '</strong> messaged you <strong>' + truncate(item.data.subject,40) + '</strong>';
-	  viewModel.body = truncate(item.data.body,128);
-	  viewModel.date= moment(item.data.created_utc, 'X').fromNow();
+            } else if(item.kind == 't4'){
+                
+                // Private Message
+                viewModel.id = item.data.name;
+                viewModel.url = "http://www.reddit.com/message/messages/"+ item.data.id;
+                viewModel.title = '<strong>' + item.data.author + '</strong> messaged you <strong>' + truncate(item.data.subject,40) + '</strong>';
+                viewModel.body = truncate(item.data.body,128);
+                viewModel.date = moment(item.data.created_utc, 'X').fromNow();
+            } else {
+            
+                // Other
+                viewModel.id = item.data.name;
+                viewModel.url ="http://www.reddit.com/message/unread";
+                viewModel.title = '<strong>' + truncate(item.data.subject?item.data.subject:'New Message',40) + '</strong>';
+                viewModel.body = truncate(item.data.body? item.data.body: '', 128);
+                viewModel.date = moment(item.data.created_utc, 'X').fromNow();
+            }
 
-	  }
-
-      notificationsHTML += getNotificationHTML(viewModel);
+            notificationsHTML += getNotificationHTML(viewModel);
+        }
     }
-  }
 
 	$("#notifications").html(notificationsHTML);
 }
 
+// Will force a refresh of notifications and will then display them
 function updateAndDisplayNotifications(callback) {
     chrome.extension.sendRequest({action : 'updateNotifications'}, function(response) {
 		displayNotifications(response);
@@ -64,10 +73,12 @@ function updateAndDisplayNotifications(callback) {
     });
 }
 
+// Mark a private message as read
 function markAsRead(name, modhash, callback) {
    chrome.extension.sendRequest({action: 'markAsRead', name: name, modhash: modhash}, callback);
 }
 
+// Set the last updated text, which is now unused...
 function setLastUpdateText(lastUpdate) {
 
   if(lastUpdate === null) {
@@ -79,6 +90,8 @@ function setLastUpdateText(lastUpdate) {
   $(".lastUpdate").html(lastUpdate);
 
 }
+
+// truncates input to defined length while ensuring that the text always ends in a full word
 function truncate(text,length){
 	if(text.length > length){
 		text = text.substring(0,length);
@@ -90,8 +103,9 @@ function truncate(text,length){
 	}
 
 	return text;
-	// truncates input to defined length while ensuring that the text always ends in a full word
 }
+
+// Add logic after dom is ready
 $(document).ready(function() {
 
 	var notifications = localStorage.getItem('notifications');
@@ -126,27 +140,21 @@ $(document).ready(function() {
 		localStorage.setItem('notifications', JSON.stringify(notifications));
 	}
 	
-		var count = (+localStorage.getItem('notificationCount')) - 1;
+	var count = (+localStorage.getItem('notificationCount')) - 1;
     if(count <= 0) {
-      localStorage.setItem('notificationCount', '0');
-      chrome.browserAction.setBadgeText({text: ''});
-      chrome.browserAction.setIcon({path: 'images/icongray.png'});
+        localStorage.setItem('notificationCount', '0');
+        chrome.browserAction.setBadgeText({text: ''});
+        chrome.browserAction.setIcon({path: 'images/icongray.png'});
     } else {
-      localStorage.setItem('notificationCount', '' + count);
-      chrome.browserAction.setBadgeText({text: '' + count});
-      chrome.browserAction.setIcon({path: 'images/icon.png'});
+        localStorage.setItem('notificationCount', '' + count);
+        chrome.browserAction.setBadgeText({text: '' + count});
+        chrome.browserAction.setIcon({path: 'images/icon.png'});
     }
     
-    // If a private message, mark as read
-	if(id.substring(0, 2) == "t4") {
-        markAsRead(id, notifications.data.modhash, function() {
-            chrome.tabs.create({url: url});
-        });
-    } else {
+	
+    markAsRead(id, notifications.data.modhash, function() {
         chrome.tabs.create({url: url});
-    }
-	//});
-
+    });
 	});
 	
 	$(".openOptions").click(function() {
@@ -162,13 +170,9 @@ $(document).ready(function() {
 	//causes spinner to go around a minimum of one cycle
 	
     updateAndDisplayNotifications(function() {
-setTimeout(updateAndDisplayNotifications);
-	  
+        setTimeout(updateAndDisplayNotifications);
     });
 
-
-
-	
     setLastUpdateText(moment().format('X'));
   });
   setLastUpdateText(localStorage.getItem('lastUpdate'));
