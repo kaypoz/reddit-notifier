@@ -22,7 +22,7 @@ body {
 	cursor: pointer;
 }
 
-
 .notification  h4 {
 	margin: 0px;
+	font-weight: normal;
 }

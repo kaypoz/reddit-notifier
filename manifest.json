@@ -12,6 +12,7 @@
     "page" : "background.html"
   },
 	"permissions": [
+	"tabs",
     "http://www.reddit.com/*"
 	],
 	"browser_action": {

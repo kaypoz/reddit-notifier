@@ -45,20 +45,59 @@ function display_stories(feed_data) {
   });
 }
 */
-$(document).ready(function() {
- //$("#popup").html("it works!");
-  $.ajax({
-    type: 'GET',
-    url: 'http://www.reddit.com/message/inbox.json',
-    dataType: 'json'
-  }).success(function(data) {
-    for(var i = 0, l = data.data.children.length; i < l; i++ ) {
 
-      var notification = data.data.children[i];
+function getNotificationHTML(model) {
+	return 	'<div data-url="' + model.url + '" class="notification">' +
+			'<h4>' + model.title + '</h4>' +
+			'<p>' + model.body + '</p>' +
+			'</div>';
+}
 
-      if(notification.kind == 't1') {
-       $("#popup").append(notification.data.body + "<BR><BR>");
-      }
+
+function displayNotifications(notifications) {
+
+	var notificationsHTML = '';
+	
+	// Loop through each notification
+	for(var i = 0, l = notifications.data.children.length; i < l; i++ ) {
+		
+		// Set up notification and its view model
+		var item = notifications.data.children[i];
+		var viewModel = {
+			title: '',
+			body: '',
+			url: ''
+		};
+		
+		
+		// If the notification is a comment reply
+		if(item.kind == 't1') {
+			viewModel.title = '<strong>' + item.data.author + '</strong> replied in <strong>' + item.data.link_title + '</strong>';
+			viewModel.body = item.data.body;
+			viewModel.url = "http://www.reddit.com" + item.data.context; 
+		}
+		
+		notificationsHTML += getNotificationHTML(viewModel);
     }
-  });
+	
+	$("#popup").html(notificationsHTML);
+}
+
+$(document).ready(function() {
+
+	var notifications = localStorage.getItem('notifications');
+	
+	if(notifications === null) {
+		chrome.extension.sendRequest({'action' : 'updateNotifications'}, function(response) {
+			displayNotifications(response);
+		});
+	} else {
+		displayNotifications(JSON.parse(notifications));
+	}
+	
+	$("body").on("click", "[data-url]", null, function(event) {
+		
+		var url = $(event.target).closest('.notification').data('url');
+		chrome.tabs.create({url: url});
+	});
 });

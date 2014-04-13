@@ -1,31 +1,25 @@
-/*
-function fetch_feed(url, callback) {
-  var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function(data) {
-      if (xhr.readyState == 4) {
-        if (xhr.status == 200) {
-          var data = xhr.responseText;
-          callback(data);
-        } else {
-          // TODO remove log msg
-          console.log('response was not 200', xhr.status)
-          callback(null);
-        }
-      }
-    }
-    // Note that any URL fetched here must be matched by a permission in
-    // the manifest.json file!
-    xhr.open('GET', url, true);
-    xhr.send();
-}
+
+var actions = {
+	updateNotifications: function(callback) {
+		$.ajax({
+			type: 'GET',
+			url: 'http://www.reddit.com/message/inbox.json',
+		}).success(function(data) {
+			console.log("Requesting Notification Data");
+			localStorage.setItem('notifications', JSON.stringify(data));
+			callback(data);
+		});
+	}
+};
 
 
 function onRequest(request, sender, callback) {
-  if (request.action == 'fetch_feed') {
-        fetch_feed(request.url, callback);
-      }
+	console.log('handling request');
+	if(actions.hasOwnProperty(request.action)) {
+		actions[request.action](callback);
+	}
 }
 
 // Wire up the listener.
 chrome.extension.onRequest.addListener(onRequest);
-*/
+
