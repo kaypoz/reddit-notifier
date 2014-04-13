@@ -17,22 +17,18 @@ body.popup {
 
 }
 
-#options {
-	width: 500px;
-	margin: 0 auto;
-}
 
-.date{
+.date {
 	font-size: 10px;
 	 float: right;
-color:#A4A4A4 
+color:#A4A4A4
 }
 
 .notification {
 	border-bottom: 1px solid #FFF;
 	padding: 5px;
 	background: #EEE;
-	
+
 }
 
 .no-notifications {
@@ -85,9 +81,4 @@ color:#369;
   content: "";
   display: table;
   clear: both;
-}
-
-
-#options > h3 {
-	text-align: center;
 }

@@ -1,3 +1,4 @@
+var updateNotificationsInterval = null;
 
 var actions = {
 	updateNotifications: function(request, callback) {
@@ -5,8 +6,6 @@ var actions = {
 			type: 'GET',
 			url: 'http://www.reddit.com/message/unread.json',
 		}).success(function(data) {
-
-			console.log("Requesting Notification Data");
 
       // Set the notifications and the current time
       localStorage.setItem('notifications', JSON.stringify(data));
@@ -41,14 +40,27 @@ var actions = {
 			}).success(function(data) {
 			if(callback) callback();
 		  });
-	}
+	},
+    
+    initNotificationsInterval: function() {
+        var refreshInterval = localStorage.getItem('refreshInterval');
+
+        if(refreshInterval === null) {
+            refreshInterval = 60000;
+        } else {
+            refreshInterval = +refreshInterval;
+        }
+
+        if(updateNotificationsInterval) {
+            clearInterval(updateNotificationsInterval);
+        }
+        updateNotificationsInterval = setInterval(actions.updateNotifications, refreshInterval);
+    }
 };
 
-setInterval(actions.updateNotifications, 60000);
-
+actions.initNotificationsInterval();
 
 function onRequest(request, sender, callback) {
-	console.log('handling request');
 	if(actions.hasOwnProperty(request.action)) {
 		actions[request.action](request, callback);
 	}

@@ -5,20 +5,24 @@
 		<script src="scripts/options.js"></script>
         <link rel="stylesheet" href="styles/font-awesome.min.css" type="text/css" />
 		<link rel="stylesheet" href="styles/main.css" type="text/css" />
+        <link rel="stylesheet" href="styles/options.css" type="text/css" />
 
 	</head>
-	<body>
-		<div id="options">
-			<h3>Reddit Notifier Options</h3>
-
-			<select>
-				<option value="60000">60 seconds</option>
-				<option value="300000">5 minutes</option>
-				<option value="900000">15 minutes</option>
-				<option value="1800000">30 minutes</option>
-
-
-			</select>
+	<body class="options">
+		<div id="options" class="group">
+			<h2>Reddit Notifier Options</h2>
+            <div class="control-label">
+                <label for="refreshInterval">Refresh Interval: </label>
+            </div>
+            <div class="control-element">
+                <select id="refreshInterval">
+                    <option value="60000">60 seconds</option>
+                    <option value="300000">5 minutes</option>
+                    <option value="900000">15 minutes</option>
+                    <option value="1800000">30 minutes</option>
+                </select>
+            </div>
+            <div class="about-text">Created by Ben Grawi and Kaycee Pozniakas<br>- 2014 -</div> 
 		</div>
 	</body>
 </html>

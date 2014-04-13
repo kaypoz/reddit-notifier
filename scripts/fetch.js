@@ -58,10 +58,10 @@ function displayNotifications(notifications) {
 }
 
 function updateAndDisplayNotifications(callback) {
-  chrome.extension.sendRequest({action : 'updateNotifications'}, function(response) {
-			displayNotifications(response);
-      if(callback) callback(response);
-		});
+    chrome.extension.sendRequest({action : 'updateNotifications'}, function(response) {
+		displayNotifications(response);
+        if(callback) callback(response);
+    });
 }
 
 function markAsRead(name, modhash, callback) {
