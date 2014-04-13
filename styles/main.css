@@ -2,5 +2,27 @@ body {
 	overflow-x: hidden;
 	margin: 0;
 	padding: 0;
-  width: 300px;
+	width: 300px;
+	color: #333;
+	font-family: "Gill Sans", Tahoma, Verdana, sans-serif;
+}
+
+#popup {
+	font-size: 14px; 
+}
+
+.notification {
+	border-bottom: 1px solid #FFF;
+	padding: 5px;
+	background: #EEE;
+}
+
+.notification:hover {
+	background: #FFF;
+	cursor: pointer;
+}
+
+
+.notification  h4 {
+	margin: 0px;
 }
