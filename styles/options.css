@@ -20,6 +20,7 @@ body.options {
     float: left;
     text-align: right;
     line-height: 42px;
+    clear: both;
 }
 #options .control-element {
     width: 50%;

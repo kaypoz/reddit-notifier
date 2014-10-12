@@ -2,6 +2,8 @@
 // The interval that holds to update notifications task
 var updateNotificationsInterval = null;
 
+var lastNotificationCount = 0;
+
 var actions = {
 	updateNotifications: function(request, callback) {
 		$.ajax({
@@ -21,11 +23,18 @@ var actions = {
         localStorage.setItem('notificationCount', '' + nCount);
         chrome.browserAction.setBadgeText({text: ''+ nCount});
         chrome.browserAction.setIcon({path: 'images/icon.png'});
+        
+        if(nCount > lastNotificationCount && localStorage.getItem('playAudio') === "true") {
+            var audio = new Audio("pop.mp3");
+            audio.play();
+        }
+        lastNotificationCount = nCount;
       } else {
 
         localStorage.setItem('notificationCount', '0');
         chrome.browserAction.setBadgeText({text: ''});
         chrome.browserAction.setIcon({path: 'images/icongray.png'});
+        lastNotificationCount = 0;
       }
 
 			if(callback) callback(data);

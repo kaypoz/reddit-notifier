@@ -5,7 +5,7 @@ body {
 	margin: 0;
 	padding: 0;
 	color: #333;
-	font-family: "Gill Sans", Tahoma, Verdana, sans-serif;
+	font-family: Helvetica, Tahoma, Verdana, sans-serif;
 }
 
 body.popup {
