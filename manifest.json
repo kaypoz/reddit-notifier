@@ -1,7 +1,7 @@
 {
   "manifest_version" : 2,
   "name": "Reddit Notifier",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Get reddit notifications in chrome",
     "options_page": "options.html",
   "icons": { "16" : "images/16.png",
@@ -13,7 +13,8 @@
   },
 	"permissions": [
 	"tabs",
-    "http://www.reddit.com/*"
+    "http://www.reddit.com/*",
+    "https://www.reddit.com/*"
 	],
 	"browser_action": {
     "default_icon": "images/icongray.png",

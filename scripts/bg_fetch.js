@@ -8,7 +8,7 @@ var actions = {
 	updateNotifications: function(request, callback) {
 		$.ajax({
 			type: 'GET',
-			url: 'http://www.reddit.com/message/unread.json',
+			url: 'https://www.reddit.com/message/unread.json',
 		}).success(function(data) {
 
       // Set the notifications and the current time
