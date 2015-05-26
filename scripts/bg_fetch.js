@@ -21,6 +21,7 @@ var actions = {
         var nCount = data.data.children.length;
 
         localStorage.setItem('notificationCount', '' + nCount);
+		chrome.browserAction.setBadgeBackgroundColor({ color: [255, 123, 85, 255] });
         chrome.browserAction.setBadgeText({text: ''+ nCount});
         chrome.browserAction.setIcon({path: 'images/icon.png'});
         

@@ -17,8 +17,11 @@
     "https://www.reddit.com/*"
 	],
 	"browser_action": {
-    "default_icon": "images/icongray.png",
-    "default_title": "Reddit Notifier",
-    "default_popup": "popup.html"
+		"default_icon": {
+			"19": "images/icongray.png",
+			"38": "images/icongray38.png"
+		 },
+		"default_title": "Reddit Notifier",
+		"default_popup": "popup.html"
   }
 }
