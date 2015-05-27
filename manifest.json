@@ -1,7 +1,7 @@
 {
   "manifest_version" : 2,
   "name": "Reddit Notifier",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Get reddit notifications in chrome",
     "options_page": "options.html",
   "icons": { "16" : "images/16.png",
