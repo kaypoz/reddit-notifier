@@ -113,7 +113,7 @@ chrome.extension.onRequest.addListener(onRequest);
 chrome.notifications.onClicked.addListener(function(id){
     var notifications = JSON.parse(localStorage.getItem('notifications'));
     // find notification with id
-    var results = $.grep(notifications.data.children, function(element){console.log("id: "+id); console.log("element: "+element);console.log("element.data.name: "+element.data.name); return element.data.name == id; })
+    var results = $.grep(notifications.data.children, function(element){return element.data.name == id; })
     if (results.length > 0){
         chrome.extension.sendRequest({action: 'markAsRead', name: results[0].data.name, modhash: results[0].data.modhash}, function() {
             chrome.tabs.create({url: "http://www.reddit.com/message/messages/" + results[0].data.name.substring(3)});
