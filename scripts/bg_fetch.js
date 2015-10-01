@@ -30,6 +30,26 @@ var actions = {
             audio.play();
         }
         lastNotificationCount = nCount;
+
+        var desktopNotificationTemplate = {
+            type: 'basic',
+            title: '',
+            message: '',
+            iconUrl: 'images/128.png'
+        };
+        data.data.children.forEach(function(element, index, array){
+            if(element.kind == 't1') {
+                // Comment Reply
+                desktopNotificationTemplate.title = element.data.author + ' replied in ' + element.data.link_title;
+            } else if(element.kind == 't4') {
+                // Private Message
+                desktopNotificationTemplate.title = element.data.author + ' messaged you "' + element.data.subject + '"';
+            } else {
+                desktopNotificationTemplate.title = item.data.subject?item.data.subject:'New Message';
+            }
+            desktopNotificationTemplate.message = element.data.body;
+            chrome.notifications.create(element.data.name, desktopNotificationTemplate);
+        });
       } else {
 
         localStorage.setItem('notificationCount', '0');
@@ -90,3 +110,14 @@ function onRequest(request, sender, callback) {
 // Wire up the listener.
 chrome.extension.onRequest.addListener(onRequest);
 
+chrome.notifications.onClicked.addListener(function(id){
+    var notifications = JSON.parse(localStorage.getItem('notifications'));
+    // find notification with id
+    var results = $.grep(notifications.data.children, function(element){console.log("id: "+id); console.log("element: "+element);console.log("element.data.name: "+element.data.name); return element.data.name == id; })
+    if (results.length > 0){
+        chrome.extension.sendRequest({action: 'markAsRead', name: results[0].data.name, modhash: results[0].data.modhash}, function() {
+            chrome.tabs.create({url: "http://www.reddit.com/message/messages/" + results[0].data.name.substring(3)});
+        });
+        chrome.notifications.clear(results[0].data.name);
+    }
+});
