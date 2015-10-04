@@ -115,8 +115,36 @@ chrome.notifications.onClicked.addListener(function(id){
     // find notification with id
     var results = $.grep(notifications.data.children, function(element){return element.data.name == id; })
     if (results.length > 0){
-        chrome.extension.sendRequest({action: 'markAsRead', name: results[0].data.name, modhash: results[0].data.modhash}, function() {
-            chrome.tabs.create({url: "http://www.reddit.com/message/messages/" + results[0].data.name.substring(3)});
+        actions.markAsRead({action: 'markAsRead', name: results[0].data.name, modhash: notifications.data.modhash}, function(){
+            console.log('markAsRead callback');
+            if(results[0].kind == 't1'){
+                // Comment Reply
+                chrome.tabs.create({url: "http://www.reddit.com" + results[0].data.context});
+            } else if (results[0].kind == 't4'){
+                // Private Message
+                chrome.tabs.create({url: "http://www.reddit.com/message/messages/" + results[0].data.name.substring(3)});
+            } else {
+                chrome.tabs.create({url: "http://www.reddit.com/message/unread"});
+            }
+
+            for(var i = 0; i < notifications.data.children.length; i++) {
+                if(notifications.data.children[i].data.name == results[0].data.name)  {
+                    notifications.data.children.splice(i, 1);
+                    localStorage.setItem('notifications', JSON.stringify(notifications));
+                    break;
+                }
+            }
+
+            var count = (+localStorage.getItem('notificationCount')) - 1;
+            if(count <= 0) {
+                localStorage.setItem('notificationCount', '0');
+                chrome.browserAction.setBadgeText({text: ''});
+                chrome.browserAction.setIcon({path: 'images/icongray.png'});
+            } else {
+                localStorage.setItem('notificationCount', '' + count);
+                chrome.browserAction.setBadgeText({text: '' + count});
+                chrome.browserAction.setIcon({path: 'images/icon.png'});
+            }
         });
         chrome.notifications.clear(results[0].data.name);
     }
