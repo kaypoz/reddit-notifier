@@ -116,7 +116,6 @@ chrome.notifications.onClicked.addListener(function(id){
     var results = $.grep(notifications.data.children, function(element){return element.data.name == id; })
     if (results.length > 0){
         actions.markAsRead({action: 'markAsRead', name: results[0].data.name, modhash: notifications.data.modhash}, function(){
-            console.log('markAsRead callback');
             if(results[0].kind == 't1'){
                 // Comment Reply
                 chrome.tabs.create({url: "http://www.reddit.com" + results[0].data.context});

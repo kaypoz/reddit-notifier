@@ -155,6 +155,8 @@ $(document).ready(function() {
     markAsRead(id, notifications.data.modhash, function() {
         chrome.tabs.create({url: url});
     });
+
+    chrome.notifications.clear(id);
 	});
 	
 	$(".openOptions").click(function() {
