@@ -31,25 +31,27 @@ var actions = {
         }
         lastNotificationCount = nCount;
 
-        var desktopNotificationTemplate = {
-            type: 'basic',
-            title: '',
-            message: '',
-            iconUrl: 'images/128.png'
-        };
-        data.data.children.forEach(function(element, index, array){
-            if(element.kind == 't1') {
-                // Comment Reply
-                desktopNotificationTemplate.title = element.data.author + ' replied in ' + element.data.link_title;
-            } else if(element.kind == 't4') {
-                // Private Message
-                desktopNotificationTemplate.title = element.data.author + ' messaged you "' + element.data.subject + '"';
-            } else {
-                desktopNotificationTemplate.title = item.data.subject?item.data.subject:'New Message';
-            }
-            desktopNotificationTemplate.message = element.data.body;
-            chrome.notifications.create(element.data.name, desktopNotificationTemplate);
-        });
+        if (localStorage.getItem('showDesktopNotifications') === "true") {
+            var desktopNotificationTemplate = {
+                type: 'basic',
+                title: '',
+                message: '',
+                iconUrl: 'images/128.png'
+            };
+            data.data.children.forEach(function(element, index, array){
+                if(element.kind == 't1') {
+                    // Comment Reply
+                    desktopNotificationTemplate.title = element.data.author + ' replied in ' + element.data.link_title;
+                } else if(element.kind == 't4') {
+                    // Private Message
+                    desktopNotificationTemplate.title = element.data.author + ' messaged you "' + element.data.subject + '"';
+                } else {
+                    desktopNotificationTemplate.title = item.data.subject?item.data.subject:'New Message';
+                }
+                desktopNotificationTemplate.message = element.data.body;
+                chrome.notifications.create(element.data.name, desktopNotificationTemplate);
+            });
+        }
       } else {
 
         localStorage.setItem('notificationCount', '0');
